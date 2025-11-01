@@ -2,14 +2,24 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import psutil
+import os
+from dotenv import load_dotenv
 
-app = FastAPI()
+# 環境変数を読み込み
+load_dotenv()
 
-# CORS設定（Reactからアクセス可能にする）
+app = FastAPI(title="Local Dev Manager API", version="1.0.0")
+
+# 環境変数から設定値を取得
+CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"
+
+# CORS設定
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
